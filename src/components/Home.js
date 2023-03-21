@@ -1,9 +1,34 @@
-import React, { useState, Fragment } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, Fragment, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import vagner from '../assets/vagner.png';
 function Home() {
-  const check = false;
-  const test = check ? (
+  const navigate = useNavigate();
+  const [check, setCheck] = useState(false);
+  useEffect(() => {
+    fetch('http://localhost:8000/users/me', {
+      credentials: 'include',
+    }).then((response) => {
+      if (response.status == 401) {
+        setCheck(false);
+      } else {
+        setCheck(true);
+      }
+    });
+  });
+  const logout = async () => {
+    let response = await fetch('http://localhost:8000/auth/logout', {
+      method: 'POST',
+      credentials: 'include',
+    });
+    let res = await response.json();
+    if (response.status == 200) {
+      navigate('/login');
+    } else {
+      alert(res.detail);
+      alert();
+    }
+  };
+  let test = check ? (
     <div className='flex flex-wrap justify-end items-center mx-auto max-w-screen-xl'>
       <Link
         className='bg-orange-500 hover:bg-orange-400 text-white font-bold py-2 px-4 border-b-4 border-orange-700 hover:border-orange-500 rounded mr-2 w-1/6 text-center'
@@ -11,12 +36,12 @@ function Home() {
       >
         Profile
       </Link>
-      <Link
+      <button
         className='bg-orange-500 hover:bg-orange-400 text-white font-bold py-2 px-4 border-b-4 border-orange-700 hover:border-orange-500 rounded mr-2 w-1/6 text-center'
-        to='/'
+        onClick={logout}
       >
         Log out
-      </Link>
+      </button>
     </div>
   ) : (
     <div className='flex flex-wrap justify-end items-center mx-auto max-w-screen-xl'>

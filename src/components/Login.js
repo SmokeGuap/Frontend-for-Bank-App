@@ -10,7 +10,7 @@ function Login() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      let response = await fetch('https://188.235.199.178:8000/auth/login', {
+      let response = await fetch('http://localhost:8000/auth/login', {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -18,10 +18,13 @@ function Login() {
         },
         body: new URLSearchParams(user),
       });
-      console.log(...response.headers);
-      // if (response.status == 200) {
-      //   navigate('/profile');
-      // }
+      let res = await response.json();
+      console.log(res);
+      if (response.status == 200) {
+        navigate('/profile');
+      } else {
+        alert(res.detail);
+      }
     } catch (e) {
       console.log('Fetch error: ', e);
     }

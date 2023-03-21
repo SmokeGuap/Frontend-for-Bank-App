@@ -14,16 +14,18 @@ function Reg() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      let response = await fetch('http://188.235.199.178:8000/auth/register', {
+      let response = await fetch('http://localhost:8000/auth/register', {
         method: 'POST',
         headers: {
           'Content-type': 'application/json; charset=UTF-8',
         },
         body: JSON.stringify(user),
       });
-      // let result = await response.json();
-      if (response.status == 200) {
+      let res = await response.json();
+      if (response.status == 201) {
         navigate('/login');
+      } else {
+        alert(res.detail);
       }
     } catch (e) {
       console.log('Fetch error: ', e);
@@ -47,21 +49,21 @@ function Reg() {
       setUser(copy);
     }
     if (id == 'firstName') {
-      if (/^[A-ZА-ЯЁ]+$/i.test(value)) {
+      if (/^[A-ZА-ЯЁ]+$/i.test(value) || value.length == 0) {
         const copy = { ...user };
         copy.first_name = value;
         setUser(copy);
       }
     }
     if (id == 'middleName') {
-      if (/^[A-ZА-ЯЁ]+$/i.test(value)) {
+      if (/^[A-ZА-ЯЁ]+$/i.test(value) || value.length == 0) {
         const copy = { ...user };
         copy.middle_name = value;
         setUser(copy);
       }
     }
     if (id == 'lastName') {
-      if (/^[A-ZА-ЯЁ]+$/i.test(value)) {
+      if (/^[A-ZА-ЯЁ]+$/i.test(value) || value.length == 0) {
         const copy = { ...user };
         copy.last_name = value;
         setUser(copy);
