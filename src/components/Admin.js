@@ -76,7 +76,6 @@ function Admin() {
               changes[5].value.length == 0 ? user.lastName : changes[5].value,
           }),
         });
-        console.log(response);
         let result = await response.json();
         setUser({
           id: result.id,
@@ -85,7 +84,6 @@ function Admin() {
           middleName: result.middle_name,
           lastName: result.last_name,
         });
-        console.log(result);
       } else if (
         changes[3].value.length != 0 ||
         changes[4].value.length != 0 ||
@@ -106,7 +104,6 @@ function Admin() {
         'Content-type': 'application/json; charset=UTF-8',
       },
     });
-    console.log(response);
     let res = await response.json();
     setUser({
       id: null,

@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 function Profile() {
   const navigate = useNavigate();
   const [loans, setLoans] = useState([]);
-  const [image, setImage] = useState(null);
+  const [image, setImage] = useState();
   const [user, setUser] = useState({
     id: 0,
     email: '',
@@ -109,7 +109,6 @@ function Profile() {
       navigate('/login');
     } else {
       alert(res.detail);
-      alert();
     }
   };
   const handleImage = (e) => {
@@ -136,6 +135,8 @@ function Profile() {
     let res = await response.json();
     if (response.ok == false) {
       alert(res.detail);
+    } else {
+      alert(res.detail);
     }
   };
   const handleNewLoan = async (e) => {
@@ -154,10 +155,6 @@ function Profile() {
         }),
       });
       let res = await response.json();
-      console.log(res);
-      if (response.ok == true) {
-        alert('Registered');
-      }
       if (response.ok == false) {
         alert(res.detail);
       }

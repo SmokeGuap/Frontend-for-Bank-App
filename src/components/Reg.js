@@ -13,22 +13,21 @@ function Reg() {
   });
   const handleSubmit = async (event) => {
     event.preventDefault();
-    try {
-      const response = await fetch('http://localhost:8000/auth/register', {
-        method: 'POST',
-        headers: {
-          'Content-type': 'application/json; charset=UTF-8',
-        },
-        body: JSON.stringify(user),
-      });
-      const res = await response.json();
-      if (response.status == 201) {
-        navigate('/login');
-      } else {
-        alert(res.detail);
-      }
-    } catch (e) {
-      console.log('Fetch error: ', e);
+    const response = await fetch('http://localhost:8000/auth/register', {
+      method: 'POST',
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8',
+      },
+      body: JSON.stringify(user),
+    });
+    const res = await response.json();
+    console.log(response);
+    console.log(res);
+
+    if (response.ok == true) {
+      navigate('/login');
+    } else {
+      alert(res.detail);
     }
   };
   const handleChange = (event) => {
