@@ -3,19 +3,17 @@ import { Link, useNavigate } from 'react-router-dom';
 
 function Manager() {
   const navigate = useNavigate();
-  const [image, setImage] = useState(
-    'https://klike.net/uploads/posts/2022-06/1654842544_1.jpg'
-  );
-  const [unverifs, setUnverifs] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [loans, setLoans] = useState([]);
   useEffect(() => {
-    fetch('http://localhost:8000/operation', {
+    fetch('http://localhost:8000/management', {
       credentials: 'include',
     })
       .then((response) => response.json())
       .then((result) => {
-        setUnverifs(result.data);
+        setLoans(result.data);
       });
-  }, []);
+  }, [loans]);
   const logout = async () => {
     let response = await fetch('http://localhost:8000/auth/logout', {
       method: 'POST',
@@ -26,39 +24,29 @@ function Manager() {
       navigate('/login');
     } else {
       alert(res.detail);
-      alert();
     }
   };
-  const handleImage = async (e) => {
+
+  const handleMore = async (user) => {
     const response = await fetch(
-      `http://localhost:8000/operation/photo/${e.target.id}`,
+      `http://localhost:8000/management/history/${user}`,
       {
         credentials: 'include',
       }
     );
-
     const res = await response.json();
-    setImage(res);
-    if (response.ok == false) {
-      alert(res.detail);
-    } else {
-      alert(res);
-    }
+    setUsers(res.data);
+    console.log('click more');
   };
-  const handleVerify = async (e) => {
+  const handleSubmit = async (id, decision) => {
     const response = await fetch(
-      `http://localhost:8000/operation/verify/${e.target.id}`,
+      `http://localhost:8000/management/response/${id}?decision=${decision}`,
       {
+        method: 'POST',
         credentials: 'include',
       }
     );
-
     const res = await response.json();
-    if (response.ok == false) {
-      alert(res.detail);
-    } else {
-      alert('Verified');
-    }
   };
   return (
     <>
@@ -74,40 +62,72 @@ function Manager() {
       </nav>
       <div className='bg-orange-200 min-h-screen'>
         <h2 className='text-2xl font-bold text-center text-white pt-10 mb-5'>
-          Operator menu
+          Manager menu
         </h2>
-        {unverifs.length == 0 ? null : (
+        {users.length == 0 ? null : (
+          <div className='overflow-x-auto  sm:rounded-lg mx-5 w-1/2 mb-10'>
+            <table className='w-full text-sm text-left text-white '>
+              <thead className='text-xs text-white uppercase bg-orange-300'>
+                <tr>
+                  <th className='px-6 py-3'>Name</th>
+                  <th className='px-6 py-3'>Last Name</th>
+                  <th className='px-6 py-3'>Middle Name</th>
+                  <th className='px-6 py-3'>passport</th>
+                  <th className='px-6 py-3'>Period</th>
+                  <th className='px-6 py-3'>Amount</th>
+                </tr>
+              </thead>
+              <tbody>
+                {users.map((user) => (
+                  <tr key={user.id} className='bg-orange-300'>
+                    <td className='px-6 py-4'>{user.first_name}</td>
+                    <td className='px-6 py-4'>{user.last_name}</td>
+                    <td className='px-6 py-4'>{user.middle_name}</td>
+                    <td className='px-6 py-4'>{user.passport}</td>
+                    <td className='px-6 py-4'>{user.period}</td>
+                    <td className='px-6 py-4'>{user.amount}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+        {loans.length == 0 ? null : (
           <div className='overflow-x-auto  sm:rounded-lg mx-5'>
             <table className='w-full text-sm text-left text-white '>
               <thead className='text-xs text-white uppercase bg-orange-500'>
                 <tr>
-                  <th className='px-6 py-3'>Name</th>
-                  <th className='px-6 py-3'>Middle Name</th>
-                  <th className='px-6 py-3'>Last Name </th>
-                  <th className='px-6 py-3'>Email</th>
-                  <th className='px-6 py-3'>Registered Date</th>
-                  <th className='px-6 py-3'>Passport</th>
-                  <th className='px-6 py-3'>Filename</th>
-                  <th className='px-6 py-3'>Verify</th>
+                  <th className='px-6 py-3'>Creation Date</th>
+                  <th className='px-6 py-3'>End Date</th>
+                  <th className='px-6 py-3'>Status</th>
+                  <th className='px-6 py-3'>Period</th>
+                  <th className='px-6 py-3'>Amount</th>
+                  <th className='px-6 py-3'>More</th>
                 </tr>
               </thead>
               <tbody>
-                {unverifs.map((unverif) => (
-                  <tr key={unverif.user.userId} className='bg-orange-400'>
-                    <td className='px-6 py-4'>{unverif.user.firstName}</td>
-                    <td className='px-6 py-4'>{unverif.user.middleName}</td>
-                    <td className='px-6 py-4'>{unverif.user.lastName}</td>
-                    <td className='px-6 py-4'>{unverif.user.email}</td>
-                    <td className='px-6 py-4'>{unverif.user.registeredAt}</td>
-                    <td className='px-6 py-4'>{unverif.number}</td>
+                {loans.map((loan) => (
+                  <tr key={loan.id} className='bg-orange-400'>
+                    <td className='px-6 py-4'>{loan.creation_date}</td>
                     <td className='px-6 py-4'>
-                      <button id={unverif.filename} onClick={handleImage}>
-                        Check the passport
+                      {loan.end_date == null ? 'NULL' : loan.end_date}
+                    </td>
+                    <td className='px-6 py-4'>{loan.status}</td>
+                    <td className='px-6 py-4'>{loan.period}</td>
+                    <td className='px-6 py-4'>{loan.amount}</td>
+                    <td className='px-6 py-4'>
+                      <button onClick={()=>{handleMore(loan.user_id)}}>
+                        About User
                       </button>
                     </td>
-                    <td className='px-6 py-4'>
-                      <button id={unverif.user.userId} onClick={handleVerify}>
-                        Verify
+                    <td className='cursor-pointer bg-green-500 ml-2 px-6 py-4 hover:bg-green-700 '>
+                      <button onClick={()=>{handleSubmit(loan.user_id, true)}}>
+                        YES
+                      </button>
+                    </td>
+                    <td className='cursor-pointer bg-red-500 px-6 py-4 hover:bg-red-700'>
+                      <button onClick={()=>{handleSubmit(loan.user_id, false)}}>
+                        NO
                       </button>
                     </td>
                   </tr>
@@ -116,9 +136,6 @@ function Manager() {
             </table>
           </div>
         )}
-        <div className='mx-auto w-1/4 mt-10'>
-          <img src={image}></img>
-        </div>
       </div>
     </>
   );

@@ -15,7 +15,7 @@ function Operator() {
       .then((result) => {
         setUnverifs(result.data);
       });
-  }, []);
+  }, [unverifs]);
   const logout = async () => {
     let response = await fetch('http://localhost:8000/auth/logout', {
       method: 'POST',
@@ -37,12 +37,11 @@ function Operator() {
       }
     );
 
-    const res = await response.json();
-    setImage(res);
+    const res = await response.blob();
+    console.log(response);
+    setImage(URL.createObjectURL(res));
     if (response.ok == false) {
       alert(res.detail);
-    } else {
-      alert(res);
     }
   };
   const handleVerify = async (e) => {
@@ -56,8 +55,6 @@ function Operator() {
     const res = await response.json();
     if (response.ok == false) {
       alert(res.detail);
-    } else {
-      alert('Verified');
     }
   };
   return (
@@ -93,12 +90,12 @@ function Operator() {
               </thead>
               <tbody>
                 {unverifs.map((unverif) => (
-                  <tr key={unverif.user.userId} className='bg-orange-400'>
-                    <td className='px-6 py-4'>{unverif.user.firstName}</td>
-                    <td className='px-6 py-4'>{unverif.user.middleName}</td>
-                    <td className='px-6 py-4'>{unverif.user.lastName}</td>
+                  <tr key={unverif.passport_id} className='bg-orange-400'>
+                    <td className='px-6 py-4'>{unverif.user.first_name}</td>
+                    <td className='px-6 py-4'>{unverif.user.middle_name}</td>
+                    <td className='px-6 py-4'>{unverif.user.last_name}</td>
                     <td className='px-6 py-4'>{unverif.user.email}</td>
-                    <td className='px-6 py-4'>{unverif.user.registeredAt}</td>
+                    <td className='px-6 py-4'>{unverif.user.registered_at}</td>
                     <td className='px-6 py-4'>{unverif.number}</td>
                     <td className='px-6 py-4'>
                       <button id={unverif.filename} onClick={handleImage}>
@@ -106,7 +103,7 @@ function Operator() {
                       </button>
                     </td>
                     <td className='px-6 py-4'>
-                      <button id={unverif.user.userId} onClick={handleVerify}>
+                      <button id={unverif.user.user_id} onClick={handleVerify}>
                         Verify
                       </button>
                     </td>
@@ -116,8 +113,8 @@ function Operator() {
             </table>
           </div>
         )}
-        <div className='mx-auto w-1/4 mt-10'>
-          <img src={image}></img>
+        <div className='mx-auto w-1/2 mt-10'>
+          <img className='w-full' src={image}></img>
         </div>
       </div>
     </>
