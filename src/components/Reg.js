@@ -14,14 +14,14 @@ function Reg() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      let response = await fetch('http://localhost:8000/auth/register', {
+      const response = await fetch('http://localhost:8000/auth/register', {
         method: 'POST',
         headers: {
           'Content-type': 'application/json; charset=UTF-8',
         },
         body: JSON.stringify(user),
       });
-      let res = await response.json();
+      const res = await response.json();
       if (response.status == 201) {
         navigate('/login');
       } else {
@@ -38,33 +38,29 @@ function Reg() {
     const {
       target: { id },
     } = event;
+    const copy = { ...user };
     if (id == 'email') {
-      const copy = { ...user };
       copy.email = value;
       setUser(copy);
     }
     if (id == 'password') {
-      const copy = { ...user };
       copy.password = value;
       setUser(copy);
     }
     if (id == 'firstName') {
       if (/^[A-ZА-ЯЁ]+$/i.test(value) || value.length == 0) {
-        const copy = { ...user };
         copy.first_name = value;
         setUser(copy);
       }
     }
     if (id == 'middleName') {
       if (/^[A-ZА-ЯЁ]+$/i.test(value) || value.length == 0) {
-        const copy = { ...user };
         copy.middle_name = value;
         setUser(copy);
       }
     }
     if (id == 'lastName') {
       if (/^[A-ZА-ЯЁ]+$/i.test(value) || value.length == 0) {
-        const copy = { ...user };
         copy.last_name = value;
         setUser(copy);
       }

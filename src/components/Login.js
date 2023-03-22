@@ -19,10 +19,21 @@ function Login() {
         body: new URLSearchParams(user),
       });
       let res = await response.json();
-      console.log(res);
-      if (response.status == 200) {
-        navigate('/profile');
-      } else {
+      if (response.ok == false) {
+        alert(res.detail);
+      }
+      response = await fetch('http://localhost:8000/users/me', {
+        credentials: 'include',
+      });
+      res = await response.json();
+      if (response.ok == true) {
+        if (res.role_id == 0) navigate('/profile');
+        if (res.role_id == 1) navigate('/operator');
+        if (res.role_id == 2) navigate('/manager');
+        if (res.role_id == 3) navigate('/accountant');
+        if (res.role_id == 100) navigate('/admin');
+      }
+      if (response.ok == false) {
         alert(res.detail);
       }
     } catch (e) {
