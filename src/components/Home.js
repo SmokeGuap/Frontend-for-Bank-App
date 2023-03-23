@@ -68,16 +68,15 @@ function Home() {
           <h2 className='text-4xl font-bold text-center mb-8 text-white'>
             Our advantages
           </h2>
-          <div className='flex items-center flex-wrap mb-20'>
+          <div className='flex items-center flex-wrap mb-20 mx-20'>
             <div className='w-full md:w-3/4'>
               <h4 className='text-3xl font-bold mb-3 text-white'>
-                Horoshiy bank
+                Convenience
               </h4>
               <p className='mb-8 text-white'>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Id
-                ullam temporibus, quidem modi officia eveniet ad maiores
-                eligendi, fuga ex tempore. Minus ab numquam animi tempora sint
-                quo cum perspiciatis.
+                Our digital financial management tool allows customers to manage
+                their finances from anywhere at any time, making it easy and
+                convenient to stay on top of their finances.
               </p>
             </div>
             <div className='md:w-1/4'>
@@ -89,25 +88,21 @@ function Home() {
             </div>
             <div className='w-full md:w-3/4 pl-10'>
               <h4 className='text-3xl font-bold mb-3 text-white'>
-                Horoshiy bank
+                Personalization
               </h4>
               <p className='mb-8 text-white'>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Id
-                ullam temporibus, quidem modi officia eveniet ad maiores
-                eligendi, fuga ex tempore. Minus ab numquam animi tempora sint
-                quo cum perspiciatis.
+                The tool will be personalized to each customer's financial
+                situation and goals, providing tailored recommendations and
+                insights that can help them achieve their objectives.
               </p>
             </div>
 
             <div className='md:w-3/4'>
-              <h4 className='text-3xl font-bold mb-3 text-white'>
-                Horoshiy bank
-              </h4>
+              <h4 className='text-3xl font-bold mb-3 text-white'>Security</h4>
               <p className='mb-8 text-white'>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Id
-                ullam temporibus, quidem modi officia eveniet ad maiores
-                eligendi, fuga ex tempore. Minus ab numquam animi tempora sint
-                quo cum perspiciatis.
+                Our bank will prioritize the security of customer information
+                and transactions, ensuring that all data is encrypted and
+                protected from unauthorized access.
               </p>
             </div>
             <div className='md:w-1/4'>
