@@ -83,9 +83,7 @@ function Home() {
             <div className='md:w-1/4'>
               <img src={vagner} alt='CHVK' />
             </div>
-          </div>
 
-          <div className='flex items-center flex-wrap mb-20'>
             <div className='md:w-1/4'>
               <img src={vagner} alt='CHVK' />
             </div>
@@ -100,9 +98,7 @@ function Home() {
                 quo cum perspiciatis.
               </p>
             </div>
-          </div>
 
-          <div className='flex items-center flex-wrap mb-20'>
             <div className='md:w-3/4'>
               <h4 className='text-3xl font-bold mb-3 text-white'>
                 Horoshiy bank

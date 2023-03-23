@@ -72,7 +72,7 @@ function Profile() {
         inputs[3].value.length != 0 ||
         inputs[4].value.length != 0
       ) {
-        alert('Цифры уберите в ФИО!');
+        alert('Некорректные данные ФИО');
       }
     } else {
       alert('Вы ничего не ввели!');

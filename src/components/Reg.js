@@ -11,6 +11,7 @@ function Reg() {
     last_name: '',
     number: '',
   });
+
   const handleSubmit = async (user) => {
     const response = await register(user);
     const res = await response.json();
@@ -63,6 +64,7 @@ function Reg() {
       }
     }
   };
+
   return (
     <>
       <div className='max-w-xs mx-auto'>

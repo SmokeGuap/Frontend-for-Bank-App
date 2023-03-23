@@ -32,8 +32,8 @@ function Manager() {
       const res = await response.json();
       setUsers(res.data);
     }
-    const colorised = document.querySelector(`tr[id='${user}']`);
-    colorised.classList.toggle('bg-orange-700');
+    const colorized = document.querySelector(`tr[id='${user}']`);
+    colorized.classList.toggle('bg-orange-700');
   };
 
   const handleSubmit = async (id, decision) => {
