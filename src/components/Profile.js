@@ -1,5 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import {
+  userInfo,
+  getLoans,
+  userChange,
+  logout,
+  newLoan,
+  sendPassport,
+} from '../APIs';
 
 function Profile() {
   const navigate = useNavigate();
@@ -13,85 +21,56 @@ function Profile() {
     middleName: '',
     lastName: '',
   });
+
   useEffect(() => {
-    fetch('http://localhost:8000/users/me', {
-      credentials: 'include',
-    })
+    userInfo()
       .then((response) => response.json())
-      .then(async (result) => {
+      .then(async (res) => {
         setUser({
-          id: result.id,
-          email: result.email,
-          firstName: result.first_name,
-          middleName: result.middle_name,
-          lastName: result.last_name,
+          id: res.id,
+          email: res.email,
+          firstName: res.first_name,
+          middleName: res.middle_name,
+          lastName: res.last_name,
         });
-        getLoans();
+        getLoans(user)
+          .then((response) => response.json())
+          .then((res) => {
+            setLoans(res.data);
+          });
       });
   }, []);
 
-  const getLoans = async () => {
-    try {
-      fetch(`http://localhost:8000/loans/?user_id=${user.id}`, {
-        credentials: 'include',
-      })
-        .then((response) => response.json())
-        .then((result) => {
-          setLoans(result.data);
-        });
-    } catch (e) {
-      console.log('Fetch error: ', e);
-    }
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const changes = document.querySelectorAll('input');
+    const inputs = document.querySelectorAll('input');
     if (
-      changes[0].value.length != 0 ||
-      changes[1].value.length != 0 ||
-      changes[2].value.length != 0 ||
-      changes[3].value.length != 0 ||
-      changes[4].value.length != 0
+      inputs[0].value.length != 0 ||
+      inputs[1].value.length != 0 ||
+      inputs[2].value.length != 0 ||
+      inputs[3].value.length != 0 ||
+      inputs[4].value.length != 0
     ) {
       if (
-        /^[A-ZА-ЯЁ]+$/i.test(changes[2].value) &&
-        /^[A-ZА-ЯЁ]+$/i.test(changes[3].value) &&
-        /^[A-ZА-ЯЁ]+$/i.test(changes[4].value)
+        /^[A-ZА-ЯЁ]+$/i.test(inputs[2].value) &&
+        /^[A-ZА-ЯЁ]+$/i.test(inputs[3].value) &&
+        /^[A-ZА-ЯЁ]+$/i.test(inputs[4].value)
       ) {
-        let response = await fetch('http://localhost:8000/users/me', {
-          method: 'PATCH',
-          credentials: 'include',
-          headers: {
-            'Content-type': 'application/json; charset=UTF-8',
-          },
-          body: JSON.stringify({
-            email: changes[0].value.length == 0 ? user.email : changes[0].value,
-            password:
-              changes[1].value.length == 0 ? user.password : changes[1].value,
-            first_name:
-              changes[2].value.length == 0 ? user.firstName : changes[2].value,
-            middle_name:
-              changes[3].value.length == 0 ? user.middleName : changes[3].value,
-            last_name:
-              changes[4].value.length == 0 ? user.lastName : changes[4].value,
-          }),
-        });
+        const response = await userChange(user, inputs);
         if (response.ok == false) {
           window.location.reload(false);
         }
-        let result = await response.json();
+        const res = await response.json();
         setUser({
-          email: result.email,
-          firstName: result.first_name,
-          middleName: result.middle_name,
-          lastName: result.last_name,
+          email: res.email,
+          firstName: res.first_name,
+          middleName: res.middle_name,
+          lastName: res.last_name,
         });
-        console.log(result);
       } else if (
-        changes[2].value.length != 0 ||
-        changes[3].value.length != 0 ||
-        changes[4].value.length != 0
+        inputs[2].value.length != 0 ||
+        inputs[3].value.length != 0 ||
+        inputs[4].value.length != 0
       ) {
         alert('Цифры уберите в ФИО!');
       }
@@ -99,13 +78,10 @@ function Profile() {
       alert('Вы ничего не ввели!');
     }
   };
-  const logout = async () => {
-    let response = await fetch('http://localhost:8000/auth/logout', {
-      method: 'POST',
-      credentials: 'include',
-    });
-    let res = await response.json();
-    if (response.status == 200) {
+  const handleLogout = async () => {
+    const response = await logout();
+    const res = await response.json();
+    if (response.ok == true) {
       navigate('/login');
     } else {
       alert(res.detail);
@@ -124,44 +100,27 @@ function Profile() {
     const formData = new FormData();
     formData.append('file', image);
 
-    let response = await fetch(
-      `http://localhost:8000/verify/?number=${passport.value}`,
-      {
-        method: 'POST',
-        credentials: 'include',
-        body: formData,
-      }
-    );
-    let res = await response.json();
+    const response = await sendPassport(passport.value, formData);
+    const res = await response.json();
     if (response.ok == false) {
       alert(res.detail);
     } else {
       alert(res.detail);
     }
   };
-  const handleNewLoan = async (e) => {
-    e.preventDefault();
-    const changes = document.querySelectorAll('input');
-    try {
-      let response = await fetch('http://localhost:8000/loans/new', {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-type': 'application/json; charset=UTF-8',
-        },
-        body: JSON.stringify({
-          period: changes[7].value,
-          amount: changes[8].value,
-        }),
-      });
-      let res = await response.json();
-      if (response.ok == false) {
-        alert(res.detail);
-      }
-      getLoans();
-    } catch (e) {
-      console.log('Fetch error: ', e);
+  const handleNewLoan = async () => {
+    const inputs = document.querySelectorAll('input');
+    const response = await newLoan(inputs);
+    const res = await response.json();
+    console.log(res);
+    if (response.ok == false) {
+      alert(res.detail);
     }
+    getLoans(user)
+      .then((response) => response.json())
+      .then((res) => {
+        setLoans(res.data);
+      });
   };
 
   return (
@@ -169,7 +128,7 @@ function Profile() {
       <nav className='bg-orange-300 border-gray-200 px-4 lg:px-6 py-2.5'>
         <div className='flex flex-wrap justify-end items-center mx-auto max-w-screen-xl'>
           <button
-            onClick={logout}
+            onClick={handleLogout}
             className='bg-orange-500 hover:bg-orange-400 text-white font-bold py-2 px-4 border-b-4 border-orange-700 hover:border-orange-500 rounded mr-2 w-1/6 text-center'
           >
             Log Out
@@ -321,7 +280,10 @@ function Profile() {
           </form>
           <h2 className='text-2xl font-bold text-white mt-5'>New Loan</h2>
           <form
-            onSubmit={handleNewLoan}
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleNewLoan();
+            }}
             className='grid grid-cols-3 text-white gap-10 mt-10 mr-5'
           >
             <div className='mb-6'>

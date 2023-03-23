@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-
+import { register } from '../APIs';
 function Reg() {
   const navigate = useNavigate();
   const [user, setUser] = useState({
@@ -11,32 +11,23 @@ function Reg() {
     last_name: '',
     number: '',
   });
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    const response = await fetch('http://localhost:8000/auth/register', {
-      method: 'POST',
-      headers: {
-        'Content-type': 'application/json; charset=UTF-8',
-      },
-      body: JSON.stringify(user),
-    });
+  const handleSubmit = async (user) => {
+    const response = await register(user);
     const res = await response.json();
-    console.log(response);
-    console.log(res);
-
     if (response.ok == true) {
       navigate('/login');
     } else {
       alert(res.detail);
     }
   };
-  const handleChange = (event) => {
+
+  const handleChange = (e) => {
     const {
       target: { value },
-    } = event;
+    } = e;
     const {
       target: { id },
-    } = event;
+    } = e;
     const copy = { ...user };
     if (id == 'email') {
       copy.email = value;
@@ -80,7 +71,10 @@ function Reg() {
         </div>
         <form
           className='bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4'
-          onSubmit={handleSubmit}
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleSubmit(user);
+          }}
         >
           <div className='mb-4'>
             <label

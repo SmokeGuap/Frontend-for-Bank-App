@@ -1,25 +1,24 @@
 import React, { useState, Fragment, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { logout, userInfo } from '../APIs';
 import vagner from '../assets/vagner.png';
+
 function Home() {
   const navigate = useNavigate();
   const [check, setCheck] = useState(false);
   useEffect(() => {
-    fetch('http://localhost:8000/users/me', {
-      credentials: 'include',
-    }).then((response) => {
-      if (response.status == 401) {
-        setCheck(false);
-      } else {
-        setCheck(true);
-      }
-    });
-  });
-  const logout = async () => {
-    let response = await fetch('http://localhost:8000/auth/logout', {
-      method: 'POST',
-      credentials: 'include',
-    });
+    userInfo()
+      .then((response) => response.json())
+      .then((res) => {
+        if (res.role_id == 0) setCheck(true);
+        if (res.role_id == 1) navigate('/operator');
+        if (res.role_id == 2) navigate('/manager');
+        if (res.role_id == 3) navigate('/accountant');
+        if (res.role_id == 100) navigate('/admin');
+      });
+  }, []);
+  const handleLogout = async () => {
+    let response = await logout();
     let res = await response.json();
     if (response.status == 200) {
       navigate('/login');
@@ -38,7 +37,7 @@ function Home() {
       </Link>
       <button
         className='bg-orange-500 hover:bg-orange-400 text-white font-bold py-2 px-4 border-b-4 border-orange-700 hover:border-orange-500 rounded mr-2 w-1/6 text-center'
-        onClick={logout}
+        onClick={handleLogout}
       >
         Log out
       </button>
@@ -72,7 +71,7 @@ function Home() {
           <div className='flex items-center flex-wrap mb-20'>
             <div className='w-full md:w-3/4'>
               <h4 className='text-3xl font-bold mb-3 text-white'>
-                Pizdatiy bank
+                Horoshiy bank
               </h4>
               <p className='mb-8 text-white'>
                 Lorem ipsum dolor sit amet consectetur adipisicing elit. Id
@@ -92,7 +91,7 @@ function Home() {
             </div>
             <div className='w-full md:w-3/4 pl-10'>
               <h4 className='text-3xl font-bold mb-3 text-white'>
-                Pizdatiy bank
+                Horoshiy bank
               </h4>
               <p className='mb-8 text-white'>
                 Lorem ipsum dolor sit amet consectetur adipisicing elit. Id
@@ -106,7 +105,7 @@ function Home() {
           <div className='flex items-center flex-wrap mb-20'>
             <div className='md:w-3/4'>
               <h4 className='text-3xl font-bold mb-3 text-white'>
-                Pizdatiy bank
+                Horoshiy bank
               </h4>
               <p className='mb-8 text-white'>
                 Lorem ipsum dolor sit amet consectetur adipisicing elit. Id

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { login, userInfo } from '../APIs';
 
 function Login() {
   const navigate = useNavigate();
@@ -7,37 +8,20 @@ function Login() {
     username: '',
     password: '',
   });
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    try {
-      let response = await fetch('http://localhost:8000/auth/login', {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams(user),
-      });
-      let res = await response.json();
-      if (response.ok == false) {
-        alert(res.detail);
-      }
-      response = await fetch('http://localhost:8000/users/me', {
-        credentials: 'include',
-      });
-      res = await response.json();
-      if (response.ok == true) {
-        if (res.role_id == 0) navigate('/profile');
-        if (res.role_id == 1) navigate('/operator');
-        if (res.role_id == 2) navigate('/manager');
-        if (res.role_id == 3) navigate('/accountant');
-        if (res.role_id == 100) navigate('/admin');
-      }
-      if (response.ok == false) {
-        alert(res.detail);
-      }
-    } catch (e) {
-      console.log('Fetch error: ', e);
+  const handleSubmit = async (user) => {
+    let response = await login(user);
+    let res = await response.json();
+    if (response.ok == false) {
+      alert(res.detail);
+    }
+    response = await userInfo();
+    res = await response.json();
+    if (response.ok == true) {
+      if (res.role_id == 0) navigate('/profile');
+      if (res.role_id == 1) navigate('/operator');
+      if (res.role_id == 2) navigate('/manager');
+      if (res.role_id == 3) navigate('/accountant');
+      if (res.role_id == 100) navigate('/admin');
     }
   };
   const handleChange = (event) => {
@@ -47,13 +31,12 @@ function Login() {
     const {
       target: { id },
     } = event;
+    const copy = { ...user };
     if (id == 'email') {
-      const copy = { ...user };
       copy.username = value;
       setUser(copy);
     }
     if (id == 'password') {
-      const copy = { ...user };
       copy.password = value;
       setUser(copy);
     }
@@ -66,7 +49,10 @@ function Login() {
         </div>
         <form
           className='bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4'
-          onSubmit={handleSubmit}
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleSubmit(user);
+          }}
         >
           <div className='mb-6'>
             <label

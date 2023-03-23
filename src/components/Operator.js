@@ -1,57 +1,45 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { loadPassport, logout, operation, verify } from '../APIs';
+
+const baseImage = 'https://klike.net/uploads/posts/2022-06/1654842544_1.jpg';
 
 function Operator() {
   const navigate = useNavigate();
-  const [image, setImage] = useState(
-    'https://klike.net/uploads/posts/2022-06/1654842544_1.jpg'
-  );
+  const [image, setImage] = useState(baseImage);
+
   const [unverifs, setUnverifs] = useState([]);
   useEffect(() => {
-    fetch('http://localhost:8000/operation', {
-      credentials: 'include',
-    })
+    operation()
       .then((response) => response.json())
-      .then((result) => {
-        setUnverifs(result.data);
+      .then((res) => {
+        setUnverifs(res.data);
       });
   }, [unverifs]);
-  const logout = async () => {
-    let response = await fetch('http://localhost:8000/auth/logout', {
-      method: 'POST',
-      credentials: 'include',
-    });
-    let res = await response.json();
-    if (response.status == 200) {
+
+  const handleLogout = async () => {
+    const response = await logout();
+    const res = await response.json();
+    if (response.ok == true) {
       navigate('/login');
     } else {
       alert(res.detail);
       alert();
     }
   };
-  const handleImage = async (e) => {
-    const response = await fetch(
-      `http://localhost:8000/operation/photo/${e.target.id}`,
-      {
-        credentials: 'include',
-      }
-    );
 
+  const handleImage = async (src) => {
+    const response = await loadPassport(src);
     const res = await response.blob();
-    console.log(response);
     setImage(URL.createObjectURL(res));
     if (response.ok == false) {
       alert(res.detail);
     }
   };
-  const handleVerify = async (e) => {
-    const response = await fetch(
-      `http://localhost:8000/operation/verify/${e.target.id}`,
-      {
-        credentials: 'include',
-      }
-    );
 
+  const handleVerify = async (src) => {
+    const response = await verify(src);
+    setImage(baseImage);
     const res = await response.json();
     if (response.ok == false) {
       alert(res.detail);
@@ -62,7 +50,7 @@ function Operator() {
       <nav className='bg-orange-300 border-gray-200 px-4 lg:px-6 py-2.5'>
         <div className='flex flex-wrap justify-end items-center mx-auto max-w-screen-xl'>
           <button
-            onClick={logout}
+            onClick={handleLogout}
             className='bg-orange-500 hover:bg-orange-400 text-white font-bold py-2 px-4 border-b-4 border-orange-700 hover:border-orange-500 rounded mr-2 w-1/6 text-center'
           >
             Log Out
@@ -97,13 +85,19 @@ function Operator() {
                     <td className='px-6 py-4'>{unverif.user.email}</td>
                     <td className='px-6 py-4'>{unverif.user.registered_at}</td>
                     <td className='px-6 py-4'>{unverif.number}</td>
-                    <td className='px-6 py-4'>
-                      <button id={unverif.filename} onClick={handleImage}>
+                    <td>
+                      <button
+                        className='w-full h-12'
+                        onClick={() => handleImage(unverif.filename)}
+                      >
                         Check the passport
                       </button>
                     </td>
-                    <td className='px-6 py-4'>
-                      <button id={unverif.user.user_id} onClick={handleVerify}>
+                    <td>
+                      <button
+                        className='w-full h-12'
+                        onClick={() => handleVerify(unverif.user.user_id)}
+                      >
                         Verify
                       </button>
                     </td>

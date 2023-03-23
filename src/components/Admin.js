@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { logout, userDeleteAdmin, userInfo, userInfoAdmin } from '../APIs';
 
 function Admin() {
   const navigate = useNavigate();
@@ -11,10 +12,9 @@ function Admin() {
     middleName: '',
     lastName: '',
   });
+
   useEffect(() => {
-    fetch('http://localhost:8000/users/me', {
-      credentials: 'include',
-    })
+    userInfo()
       .then((response) => response.json())
       .then(async (res) => {
         if (res.role_id != 100) {
@@ -22,15 +22,10 @@ function Admin() {
         }
       });
   }, []);
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+
+  const handleSubmit = async () => {
     const userID = document.querySelector('#userId');
-    const response = await fetch(
-      `http://localhost:8000/users/${userID.value}`,
-      {
-        credentials: 'include',
-      }
-    );
+    const response = await userInfoAdmin(userID.value);
     const res = await response.json();
     setUser({
       id: res.id,
@@ -43,51 +38,34 @@ function Admin() {
       alert(res.detail);
     }
   };
-  const handleChange = async (e) => {
-    e.preventDefault();
-    const changes = document.querySelectorAll('input');
+
+  const handleChange = async () => {
+    const inputs = document.querySelectorAll('input');
     if (
-      changes[1].value.length != 0 ||
-      changes[2].value.length != 0 ||
-      changes[3].value.length != 0 ||
-      changes[4].value.length != 0 ||
-      changes[5].value.length != 0
+      inputs[1].value.length != 0 ||
+      inputs[2].value.length != 0 ||
+      inputs[3].value.length != 0 ||
+      inputs[4].value.length != 0 ||
+      inputs[5].value.length != 0
     ) {
       if (
-        /^[A-ZА-ЯЁ]+$/i.test(changes[3].value) &&
-        /^[A-ZА-ЯЁ]+$/i.test(changes[4].value) &&
-        /^[A-ZА-ЯЁ]+$/i.test(changes[5].value)
+        /^[A-ZА-ЯЁ]+$/i.test(inputs[3].value) &&
+        /^[A-ZА-ЯЁ]+$/i.test(inputs[4].value) &&
+        /^[A-ZА-ЯЁ]+$/i.test(inputs[5].value)
       ) {
-        let response = await fetch(`http://localhost:8000/users/${user.id}`, {
-          method: 'PATCH',
-          credentials: 'include',
-          headers: {
-            'Content-type': 'application/json; charset=UTF-8',
-          },
-          body: JSON.stringify({
-            email: changes[1].value.length == 0 ? user.email : changes[1].value,
-            password:
-              changes[2].value.length == 0 ? user.password : changes[2].value,
-            first_name:
-              changes[3].value.length == 0 ? user.firstName : changes[3].value,
-            middle_name:
-              changes[4].value.length == 0 ? user.middleName : changes[4].value,
-            last_name:
-              changes[5].value.length == 0 ? user.lastName : changes[5].value,
-          }),
-        });
-        let result = await response.json();
+        const response = await userInfoAdmin(user, inputs);
+        const res = await response.json();
         setUser({
-          id: result.id,
-          email: result.email,
-          firstName: result.first_name,
-          middleName: result.middle_name,
-          lastName: result.last_name,
+          id: res.id,
+          email: res.email,
+          firstName: res.first_name,
+          middleName: res.middle_name,
+          lastName: res.last_name,
         });
       } else if (
-        changes[3].value.length != 0 ||
-        changes[4].value.length != 0 ||
-        changes[5].value.length != 0
+        inputs[3].value.length != 0 ||
+        inputs[4].value.length != 0 ||
+        inputs[5].value.length != 0
       ) {
         alert('Цифры уберите в ФИО!');
       }
@@ -95,16 +73,11 @@ function Admin() {
       alert('Вы ничего не ввели!');
     }
   };
-  const handleDelete = async (e) => {
-    e.preventDefault();
-    let response = await fetch(`http://localhost:8000/users/${user.id}`, {
-      method: 'DELETE',
-      credentials: 'include',
-      headers: {
-        'Content-type': 'application/json; charset=UTF-8',
-      },
-    });
-    let res = await response.json();
+
+  const handleDelete = async () => {
+    const response = await userDeleteAdmin(user.id);
+    console.log(response);
+    const res = await response.json();
     setUser({
       id: null,
       email: '',
@@ -114,29 +87,28 @@ function Admin() {
       lastName: '',
     });
   };
-  const logout = async () => {
-    let response = await fetch('http://localhost:8000/auth/logout', {
-      method: 'POST',
-      credentials: 'include',
-    });
+
+  const handleLogout = async () => {
+    let response = await logout();
     let res = await response.json();
-    if (response.status == 200) {
+    if (response.ok == true) {
       navigate('/login');
     } else {
       alert(res.detail);
       alert();
     }
   };
+
   return (
     <>
       <nav className='bg-orange-300 border-gray-200 px-4 lg:px-6 py-2.5'>
         <div className='flex flex-wrap justify-end items-center mx-auto max-w-screen-xl'>
           <button
-            onClick={logout}
+            onClick={handleLogout}
             className='bg-orange-500 hover:bg-orange-400 text-white font-bold py-2 px-4 border-b-4 border-orange-700 hover:border-orange-500 rounded mr-2 w-1/6 text-center'
           >
             Log Out
-          </button>          
+          </button>
         </div>
       </nav>
       <div className='bg-orange-200 min-h-screen'>
@@ -145,8 +117,11 @@ function Admin() {
         </h2>
         <section className='container mx-auto p-5 w-1/2'>
           <form
-            onSubmit={handleSubmit}
-            className=' mx-20 text-white gap-10 mt-10'
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSubmit();
+            }}
+            className='mx-20 text-white gap-10 mt-10'
           >
             <div className='mb-6'>
               <label
@@ -174,7 +149,10 @@ function Admin() {
             <span>Last Name: {user.lastName}</span>
           </div>
           <form
-            onSubmit={handleChange}
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleChange(user.id);
+            }}
             className='grid grid-cols-2 text-white gap-10 mt-10'
           >
             <div className='mb-6'>
