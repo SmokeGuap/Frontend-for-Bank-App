@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { logout, userDeleteAdmin, userInfo, userInfoAdmin } from '../APIs';
+import {
+  logout,
+  userChangeAdmin,
+  userDeleteAdmin,
+  userInfo,
+  userInfoAdmin,
+} from '../APIs';
 
 function Admin() {
   const navigate = useNavigate();
@@ -53,7 +59,7 @@ function Admin() {
         /^[A-ZА-ЯЁ]+$/i.test(inputs[4].value) &&
         /^[A-ZА-ЯЁ]+$/i.test(inputs[5].value)
       ) {
-        const response = await userInfoAdmin(user, inputs);
+        const response = await userChangeAdmin(user, inputs);
         const res = await response.json();
         setUser({
           id: res.id,
@@ -67,7 +73,7 @@ function Admin() {
         inputs[4].value.length != 0 ||
         inputs[5].value.length != 0
       ) {
-        alert('Цифры уберите в ФИО!');
+        alert('Некорректные данные ФИО');
       }
     } else {
       alert('Вы ничего не ввели!');
