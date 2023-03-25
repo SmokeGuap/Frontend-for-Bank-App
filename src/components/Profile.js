@@ -245,12 +245,9 @@ function Profile() {
           </section>
         </div>
         <div>
-          <label
-            className='block text-white text-2xl font-bold mb-2 mt-5'
-            htmlFor='verify'
-          >
+          <div className='block text-white text-2xl font-bold mb-2 mt-5'>
             Verify your passport
-          </label>
+          </div>
           <form
             onSubmit={handleUpload}
             className='grid grid-cols-3 text-white gap-10 mt-10 mr-5'
