@@ -10,6 +10,7 @@ function Manager() {
     management()
       .then((response) => response.json())
       .then((res) => {
+        console.log(res.data);
         setLoans(res.data);
       });
   }, []);
@@ -40,6 +41,7 @@ function Manager() {
     let response = await makeDecision(id, decision);
     let res = await response.json();
     if (response.ok == true) {
+      setUsers([]);
       alert('Your decision has been sent');
       response = await management();
       res = await response.json();
@@ -72,6 +74,7 @@ function Manager() {
                   <th className='px-6 py-3'>Creation Date</th>
                   <th className='px-6 py-3'>End Date</th>
                   <th className='px-6 py-3'>Status</th>
+                  <th className='px-6 py-3'>Is Active</th>
                   <th className='px-6 py-3'>Period</th>
                   <th className='px-6 py-3'>Amount</th>
                   <th className='px-6 py-3'>More</th>
@@ -91,6 +94,9 @@ function Manager() {
                       {loan.end_date == null ? 'NULL' : loan.end_date}
                     </td>
                     <td className='px-6 py-4'>{loan.status}</td>
+                    <td className='px-6 py-4'>
+                      {loan.is_active == true ? 'true' : 'false'}
+                    </td>
                     <td className='px-6 py-4'>{loan.period}</td>
                     <td className='px-6 py-4'>{loan.amount}</td>
                     <td className='cursor-pointer'>
