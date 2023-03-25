@@ -12,6 +12,8 @@ import {
 function Profile() {
   const navigate = useNavigate();
   const [loans, setLoans] = useState([]);
+  const [period, setPeriod] = useState(1);
+  const [amount, setAmount] = useState(1000);
   const [image, setImage] = useState();
   const [user, setUser] = useState({
     id: 0,
@@ -108,13 +110,21 @@ function Profile() {
       alert(res.detail);
     }
   };
+
+  const handleChangePeriod = (e) => {
+    setPeriod(e.target.value);
+  };
+
+  const handleChangeAmount = (e) => {
+    setAmount(e.target.value);
+  };
+
   const handleNewLoan = async () => {
     const inputs = document.querySelectorAll('input');
     const response = await newLoan(inputs);
     const res = await response.json();
-    console.log(res);
     if (response.ok == false) {
-      alert(res.detail);
+      alert(res.detail?.[0].msg);
     }
     getLoans(user)
       .then((response) => response.json())
@@ -294,11 +304,19 @@ function Profile() {
                 Period
               </label>
               <input
+                onChange={handleChangePeriod}
                 className='shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline w-full'
                 id='period'
                 placeholder='Enter period'
-                type='text'
+                type='range'
+                min='1'
+                max='120'
+                step='1'
+                value={period}
               />
+              <div className='w-full text-center text-xl' id='periodValue'>
+                {period}
+              </div>
             </div>
             <div className='mb-6'>
               <label
@@ -308,11 +326,19 @@ function Profile() {
                 Amount
               </label>
               <input
+                onChange={handleChangeAmount}
                 className='shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline w-full'
                 id='amount'
                 placeholder='Enter amount'
-                type='text'
+                type='range'
+                min='1000'
+                max='100000'
+                step='1000'
+                value={amount}
               />
+              <div className='w-full text-center text-xl' id='periodValue'>
+                {amount}
+              </div>
             </div>
             <button className='bg-orange-500 hover:bg-orange-400 text-white font-bold py-2 px-4 mb-4 border-b-4 border-orange-700 hover:border-orange-500 mt-2 rounded mr-2 text-center w-full'>
               Create Loan
