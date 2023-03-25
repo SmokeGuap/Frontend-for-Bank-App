@@ -9,10 +9,10 @@ function Accountant() {
   useEffect(() => {
     accountant()
       .then((response) => response.json())
-      .then((result) => {
-        setUsers(result.data);
+      .then((res) => {
+        setUsers(res.data);
       });
-  }, [users]);
+  }, []);
 
   const handleLogout = async () => {
     const response = await logout();
@@ -24,9 +24,12 @@ function Accountant() {
     }
   };
   const handleSubmit = async (id) => {
-    const response = await pay(id);
-    const res = await response.json();
+    let response = await pay(id);
+    let res = await response.json();
     alert(res.detail);
+    response = await accountant();
+    res = await response.json();
+    setUsers(res.data);
   };
   return (
     <>

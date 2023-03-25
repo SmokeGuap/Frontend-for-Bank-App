@@ -9,13 +9,14 @@ function Operator() {
   const [image, setImage] = useState(baseImage);
 
   const [unverifs, setUnverifs] = useState([]);
+
   useEffect(() => {
     operation()
       .then((response) => response.json())
       .then((res) => {
         setUnverifs(res.data);
       });
-  }, [unverifs]);
+  }, []);
 
   const handleLogout = async () => {
     const response = await logout();
@@ -38,12 +39,15 @@ function Operator() {
   };
 
   const handleVerify = async (src) => {
-    const response = await verify(src);
+    let response = await verify(src);
     setImage(baseImage);
-    const res = await response.json();
+    let res = await response.json();
     if (response.ok == false) {
       alert(res.detail);
     }
+    response = await operation();
+    res = await response.json();
+    setUnverifs(res.data);
   };
   return (
     <>

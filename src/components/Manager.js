@@ -12,7 +12,7 @@ function Manager() {
       .then((res) => {
         setLoans(res.data);
       });
-  }, [loans]);
+  }, []);
 
   const handleLogout = async () => {
     const response = await logout();
@@ -37,10 +37,13 @@ function Manager() {
   };
 
   const handleSubmit = async (id, decision) => {
-    const response = await makeDecision(id, decision);
-    const res = await response.json();
+    let response = await makeDecision(id, decision);
+    let res = await response.json();
     if (response.ok == true) {
       alert('Your decision has been sent');
+      response = await management();
+      res = await response.json();
+      setLoans(res.data);
     } else {
       alert(res.detail);
     }

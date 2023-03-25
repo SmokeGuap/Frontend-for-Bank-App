@@ -83,7 +83,6 @@ function Admin() {
   const handleDelete = async () => {
     const response = await userDeleteAdmin(user.id);
     console.log(response);
-    const res = await response.json();
     setUser({
       id: null,
       email: '',
