@@ -1,7 +1,9 @@
 import React, { useState, Fragment, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { logout, userInfo } from '../APIs';
-import vagner from '../assets/vagner.png';
+import kittyFirst from '../assets/kitty 1.jpg';
+import kittySecond from '../assets/kitty 2.jpg';
+import kittyThird from '../assets/kitty 3.jpg';
 
 function Home() {
   const navigate = useNavigate();
@@ -68,8 +70,8 @@ function Home() {
           <h2 className='text-4xl font-bold text-center mb-8 text-white'>
             Our advantages
           </h2>
-          <div className='flex items-center flex-wrap mb-20 mx-20'>
-            <div className='w-full md:w-3/4'>
+          <div className='flex flex-wrap mx-20 gap-y-8'>
+            <div className='w-full md:w-1/4'>
               <h4 className='text-3xl font-bold mb-3 text-white'>
                 Convenience
               </h4>
@@ -79,14 +81,22 @@ function Home() {
                 convenient to stay on top of their finances.
               </p>
             </div>
-            <div className='md:w-1/4'>
-              <img src={vagner} alt='CHVK' />
+            <div className='md:w-3/4'>
+              <img
+                className='w-full h-72 rounded-lg shadow-none transition-shadow duration-300 ease-in-out hover:shadow-lg hover:shadow-black/30 object-fill'
+                src={kittyFirst}
+                alt='CHVK'
+              />
             </div>
 
-            <div className='md:w-1/4'>
-              <img src={vagner} alt='CHVK' />
+            <div className='md:w-3/4'>
+              <img
+                className='w-full h-72 rounded-lg shadow-none transition-shadow duration-300 ease-in-out hover:shadow-lg hover:shadow-black/30 object-cover'
+                src={kittySecond}
+                alt='CHVK'
+              />
             </div>
-            <div className='w-full md:w-3/4 pl-10'>
+            <div className='w-full md:w-1/4 pl-10'>
               <h4 className='text-3xl font-bold mb-3 text-white'>
                 Personalization
               </h4>
@@ -97,7 +107,7 @@ function Home() {
               </p>
             </div>
 
-            <div className='md:w-3/4'>
+            <div className='md:w-1/4'>
               <h4 className='text-3xl font-bold mb-3 text-white'>Security</h4>
               <p className='mb-8 text-white'>
                 Our bank will prioritize the security of customer information
@@ -105,8 +115,12 @@ function Home() {
                 protected from unauthorized access.
               </p>
             </div>
-            <div className='md:w-1/4'>
-              <img src={vagner} alt='CHVK' />
+            <div className='md:w-3/4'>
+              <img
+                className='w-full h-72 rounded-lg shadow-none transition-shadow duration-300 ease-in-out hover:shadow-lg hover:shadow-black/30 object-cover'
+                src={kittyThird}
+                alt='CHVK'
+              />
             </div>
           </div>
         </section>
